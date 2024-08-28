@@ -1,0 +1,72 @@
+
+    (function() {
+      var baseURL = "https://cdn.shopify.com/shopifycloud/checkout-web/assets/";
+      var scripts = ["https://cdn.shopify.com/shopifycloud/checkout-web/assets/runtime.latest.es.d033fe686e86ad3ad6ee.js","https://cdn.shopify.com/shopifycloud/checkout-web/assets/3978.latest.es.18ca082696fc3e91bfdd.js","https://cdn.shopify.com/shopifycloud/checkout-web/assets/5817.latest.es.5b8f3a488f62c86e1062.js","https://cdn.shopify.com/shopifycloud/checkout-web/assets/5816.latest.es.62966691cce79d1ce69d.js","https://cdn.shopify.com/shopifycloud/checkout-web/assets/app.latest.es.3520adee88f58f426523.js","https://cdn.shopify.com/shopifycloud/checkout-web/assets/4100.latest.es.8e7cc044415897fd13ea.js","https://cdn.shopify.com/shopifycloud/checkout-web/assets/3147.latest.es.5cb97deead945b5bc3b3.js","https://cdn.shopify.com/shopifycloud/checkout-web/assets/794.latest.es.f8a7f2bbf7aef3e0f8bf.js","https://cdn.shopify.com/shopifycloud/checkout-web/assets/4328.latest.es.28899aaa9056c6a122d6.js","https://cdn.shopify.com/shopifycloud/checkout-web/assets/648.latest.es.2f1da2766301e3f17422.js","https://cdn.shopify.com/shopifycloud/checkout-web/assets/5455.latest.es.7f222a9a97fdcce4e765.js","https://cdn.shopify.com/shopifycloud/checkout-web/assets/8024.latest.es.0d92b511635ad40cd847.js","https://cdn.shopify.com/shopifycloud/checkout-web/assets/8217.latest.es.875c52a69df3c67753ac.js","https://cdn.shopify.com/shopifycloud/checkout-web/assets/OnePage.latest.es.d301152a4e0617d3ae1e.js"];
+      var styles = ["https://cdn.shopify.com/shopifycloud/checkout-web/assets/3978.latest.es.f129471e9a0ecd461490.css","https://cdn.shopify.com/shopifycloud/checkout-web/assets/app.latest.es.8bb004feb2aa35e02d5d.css","https://cdn.shopify.com/shopifycloud/checkout-web/assets/6268.latest.es.bf9a2ca64ac9de0fe050.css"];
+      var fontPreconnectUrls = [];
+      var fontPrefetchUrls = [];
+      var imgPrefetchUrls = ["https://cdn.shopify.com/s/files/1/0595/9807/8009/files/fondo_vacio_tr_x320.png?v=1651520062","https://cdn.shopify.com/s/files/1/0595/9807/8009/files/banner_horizontsl_fb_sec_dcto_14_2000x.png?v=1724090789"];
+
+      function preconnect(url, callback) {
+        var link = document.createElement('link');
+        link.rel = 'dns-prefetch preconnect';
+        link.href = url;
+        link.crossOrigin = '';
+        link.onload = link.onerror = callback;
+        document.head.appendChild(link);
+      }
+
+      function preconnectAssets() {
+        var resources = [baseURL].concat(fontPreconnectUrls);
+        var index = 0;
+        (function next() {
+          var res = resources[index++];
+          if (res) preconnect(res, next);
+        })();
+      }
+
+      function prefetch(url, as, callback) {
+        var link = document.createElement('link');
+        if (link.relList.supports('prefetch')) {
+          link.rel = 'prefetch';
+          link.fetchPriority = 'low';
+          link.as = as;
+          if (as === 'font') link.type = 'font/woff2';
+          link.href = url;
+          link.crossOrigin = '';
+          link.onload = link.onerror = callback;
+          document.head.appendChild(link);
+        } else {
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', url, true);
+          xhr.onloadend = callback;
+          xhr.send();
+        }
+      }
+
+      function prefetchAssets() {
+        var resources = [].concat(
+          scripts.map(function(url) { return [url, 'script']; }),
+          styles.map(function(url) { return [url, 'style']; }),
+          fontPrefetchUrls.map(function(url) { return [url, 'font']; }),
+          imgPrefetchUrls.map(function(url) { return [url, 'image']; })
+        );
+        var index = 0;
+        (function next() {
+          var res = resources[index++];
+          if (res) prefetch(res[0], res[1], next);
+        })();
+      }
+
+      function onLoaded() {
+        preconnectAssets();
+        prefetchAssets();
+      }
+
+      if (document.readyState === 'complete') {
+        onLoaded();
+      } else {
+        addEventListener('load', onLoaded);
+      }
+    })();
+  
